@@ -1,0 +1,19 @@
+#!/bin/sh
+message=$(git show --no-patch --format=%B)
+reviewCommand="-review"
+if [[ $message == *$reviewCommand* ]]
+then
+	echo '开启code review'
+	idCommand="-id"
+	if [[ $message == *$idCommand* ]]
+	then
+		echo "使用上一次的review记录"${message#*-id}
+		rbt post -r ${message#*-id}
+	else
+		echo "开启新的codereview"
+		rbt post -o -g
+	fi
+	
+else
+  echo "不进行code review"
+fi

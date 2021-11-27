@@ -1,0 +1,17 @@
+#!/bin/sh
+PATH="/opt/homebrew/bin:$PATH"
+message=$(cat $1)
+appid='20210927000958129'
+key='CV8KobRrV48LfLU5XBJ_'
+salt='1435660288'
+mdsStr=$appid$message$salt$key
+sign=$(md5 -s $mdsStr)
+url="http://api.fanyi.baidu.com/api/trans/vip/translate?q="$message"&from=zh&to=en&appid=20210927000958129&salt=1435660288&sign="${sign#*= }
+result=$(curl $url | jq '.trans_result''[0]''.dst')
+temp="${result%\"}"
+temp="${temp#\"}"
+ if [[ "$temp" != 'null' ]]
+ then
+	echo "$temp" > "$1"
+ fi
+
